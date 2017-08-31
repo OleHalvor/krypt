@@ -5,17 +5,19 @@ import random
 # from pathlib import Path
 
 keyfile = "totallyNotTheKeyInPlaintext.key"
-# global key
-#key ="hest"
 debug = 0
 if debug == 1:
 	print("DEBUG-MODE")
 substitution=True 
 
-# transposition flytt til høure med verdi av nkkel[i]mod(length av message)
-# Støtte for flere lag med kryptering
 # autoinstall av pyperclip?
 # -armor
+
+iterations = 2
+
+def getIterations():
+	return iterations
+
 
 def encrypt(plaintext,key,iterations):
 	if len(plaintext)%2==1:
@@ -238,7 +240,7 @@ def initKey():
 	    	key = firstLine
 	except IOError:
 	    file = open(keyfile, 'w')
-	    file.write("Det er alltid lurt å ha lange nøkler, slik at man ikke så lett blir brute forcet!")
+	    file.write("default_key")
 
 def parseInput(text,counter):
 	trimmedText = trimCiphertext(text)
@@ -270,9 +272,10 @@ def parseInput(text,counter):
 			setKey("Det er alltid lurt å ha lange nøkler, slik at man ikke så lett blir brute forcet!")
 			print("The key has been reset!")
 
-	elif text=="--setiterations" or text=="setIterations":
-		print("Enter number of encryption layers:")
-		iterations=input()
+	# elif text=="--setiterations" or text=="setIterations" or text[:]=="-i" or text[:]=="-I" or text[:]=="--iterations" or text[:]=="--Iterations":
+	# 	print("Enter number of encryption layers:")
+	# 	setIterations(input())
+	# 	print("iterations is now: ",getIterations())
 
 	elif text[:7]=="-setkey" or text[:7]=="-setKey":
 		print("Enter the new key")
@@ -290,7 +293,7 @@ def parseInput(text,counter):
 			print('Encrypting: "'+text+'"')
 		else:
 			print("Encrypting!")
-		print("Ciphertext: ",encrypt(text,getKey(),10))
+		print("Ciphertext: ",encrypt(text,getKey(),getIterations()))
 		if counter<3:
 			print("The ciphertext has been copied to your clipboard \n")
 
@@ -306,5 +309,4 @@ else:
 parseInput(text,0)
 print('You can use chat-mode by running "python krypt.py -chat", or get help by using "-h"')
 
-#TODO: Plugin til nettleser som automatisk krypterer før det sendes via facebook
-
+#TODO: Plugin til nettleser som automatisk krypterer før det sendes via facebook ?
