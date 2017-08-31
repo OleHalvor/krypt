@@ -30,7 +30,8 @@ def encrypt(plaintext,key,iterations):
 	while (counter < len(plaintext)):
 		for i in range (0,len(key)):
 			if(substitution):
-				ciphertext+= chr((ord(str(plaintext[counter]))+((ord(key[i])+seedExp+i)-50)+seedSub)%200000)
+				newValue= (ord(str(plaintext[counter]))+((ord(key[i])+seedExp+i))+seedSub)
+				ciphertext+= chr((newValue)%3000)
 			else:
 				ciphertext+= chr((ord(str(plaintext[counter]))))
 			counter += 1
@@ -114,8 +115,9 @@ def decrypt(ciphertext,key):
 	for i in range(0,len(ciphertext)):
 		totalValue+=ord(ciphertext[i])
 	if totalValue%100!=0:
-		print("________________________________________________________________")
-		print("WARNING: This message does not verify. It may have been altered or has become corrupted")
+		# print("________________________________________________________________")
+		# print("WARNING: This message does not verify. It may have been altered or has become corrupted")
+		pass
 	if debug==1:
 		print(" checksum: ",totalValue)
 	#print("Total checksum value: ",totalValue)
@@ -125,11 +127,9 @@ def decrypt(ciphertext,key):
 	for i in range(len(key)):
 		totalValue+=ord(key[i])
 	if ((totalValue+ord(ciphertext[0]))%100)!=0:
-		print("________________________________________________________________")
+		# print("________________________________________________________________")
 		print("WARNING: Key missmatch")
-		print("________________________________________________________________")
-		print(totalValue,ord(ciphertext[0]))
-		print((totalValue+ord(ciphertext[0]))%100)
+		# print("________________________________________________________________")
 	ciphertext =ciphertext[1:]
 
 	ciphertext = ciphertext.replace("___"," ")
@@ -171,7 +171,8 @@ def decrypt(ciphertext,key):
 	while ( counter < textSize):
 		for i in range(0,len(key)):
 			if(substitution):
-				plaintext += chr((ord(str(ciphertext[counter]))-((ord(key[i])+seedExp+i)-50)-seedSub)%200000)
+				newValue = ord(str(ciphertext[counter]))-((ord(key[i])+seedExp+i))-seedSub
+				plaintext += chr((newValue)%250)
 			else:
 				plaintext+= chr((ord(str(ciphertext[counter]))))
 			counter += 1
@@ -289,7 +290,7 @@ def parseInput(text,counter):
 			print('Encrypting: "'+text+'"')
 		else:
 			print("Encrypting!")
-		print("Ciphertext: ",encrypt(text,getKey(),0))
+		print("Ciphertext: ",encrypt(text,getKey(),10))
 		if counter<3:
 			print("The ciphertext has been copied to your clipboard \n")
 
