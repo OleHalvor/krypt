@@ -2,6 +2,7 @@ import sys
 import pyperclip
 import copy
 import random
+import os
 # from pathlib import Path
 
 keyfile = "totallyNotTheKeyInPlaintext.key"
@@ -32,7 +33,8 @@ def encrypt(plaintext,key,iterations):
 	while (counter < len(plaintext)):
 		for i in range (0,len(key)):
 			if(substitution):
-				newValue= (ord(str(plaintext[counter]))+((ord(key[i])+seedExp+i))+seedSub)
+				# newValue= (ord(str(plaintext[counter]))+((ord(key[i])+seedExp+i))+seedSub)
+				newValue= (ord(str(plaintext[counter]))+((ord(key[i])%13)))
 				ciphertext+= chr((newValue)%3000)
 			else:
 				ciphertext+= chr((ord(str(plaintext[counter]))))
@@ -56,16 +58,11 @@ def encrypt(plaintext,key,iterations):
 
 	# New transpositinon
 	tempCiphertext=""
-	# print("Before trans: ",ciphertext)
 	for i in range(len(ciphertext)):
 		placement=((ord(key[i%len(key)])+i+seedExp)%len(ciphertext))
-		# print("placement:",i,placement)
 		tempCiphertext=ciphertext[:i]+ciphertext[i+1:]
-		# print("tempc:",tempCiphertext)
 		tempCiphertext=tempCiphertext[:placement]+ciphertext[i]+tempCiphertext[placement:]
 		ciphertext = copy.deepcopy(tempCiphertext)
-		# print("   inside: ",ciphertext)
-	# print("After trans: ",ciphertext)
 
 	# for i in range(len(ciphertext)-1,0,-1):
 	# 	placement=((ord(key[i%len(key)])+i)%len(ciphertext))
@@ -78,7 +75,7 @@ def encrypt(plaintext,key,iterations):
 	
 	#fjern character 32
 	#Sjekk om du kan bruke markering i stedet for kopiering
-	ciphertext = ciphertext.replace(" ","___")
+	ciphertext = ciphertext.replace(" ","ߐ")
 	ciphertext = ciphertext.replace(chr(10),"******")
 	#Checksum key
 	totalValue=0
@@ -96,13 +93,18 @@ def encrypt(plaintext,key,iterations):
 
 	ciphertext = "!----"+str(seedExp)+str(seedSub)+(str(seedRev))+chr(messageValueToAdd)+ciphertext+"----!"
 	pyperclip.copy(ciphertext)
-	if(iterations<=1):
+	if (len(ciphertext)>=50 and iterations<=1):
 		return ciphertext
 	else:
-		# print("Encrypt again: ",iterations)
 		return encrypt(ciphertext,key,iterations-1)
+	# if(iterations<=1):
+	# 	return ciphertext
+	# else:
+	# 	# print("Encrypt again: ",iterations)
+	# 	return encrypt(ciphertext,key,iterations-1)
 
 def decrypt(ciphertext,key):
+	#print("decrypt")
 	if debug==1:
 		print("1",ciphertext)
 	ciphertext = ciphertext[5:len(ciphertext)-5]
@@ -134,7 +136,8 @@ def decrypt(ciphertext,key):
 		# print("________________________________________________________________")
 	ciphertext =ciphertext[1:]
 
-	ciphertext = ciphertext.replace("___"," ")
+	ciphertext = ciphertext.replace("ߐ"," ")
+	ciphertext = ciphertext.replace("******",chr(10))
 
 	# print("before",ciphertext)
 	for i in range(len(ciphertext)-1,-1,-1):
@@ -173,7 +176,8 @@ def decrypt(ciphertext,key):
 	while ( counter < textSize):
 		for i in range(0,len(key)):
 			if(substitution):
-				newValue = ord(str(ciphertext[counter]))-((ord(key[i])+seedExp+i))-seedSub
+				# newValue = ord(str(ciphertext[counter]))-((ord(key[i])+seedExp+i))-seedSub
+				newValue= (ord(str(ciphertext[counter]))-((ord(key[i])%13)))
 				plaintext += chr((newValue)%250)
 			else:
 				plaintext+= chr((ord(str(ciphertext[counter]))))
@@ -205,18 +209,24 @@ def trimCiphertext(ciphertext):
 	return ciphertext
 
 def continous():
-	print("--CHAT-MODE--")
+	os.system('cls' if os.name == 'nt' else 'clear')
+	print("\n### SuperKrypt ###\n")
+	print('Enter "-h" to view available commands\n')
 	counter = 0
+	
 	while True:
+
 		if counter <3:
 			print("Enter text to be encryped, or press enter to encrypt/decrypt your clipboard")
 		else:
 			print("Enter text:")
 		inputText=input()
+		# 
 		if len(inputText)==0:
 			inputText = pyperclip.paste()
 			print("Using text from clipboard: ")
 		parseInput(inputText,counter)
+
 		counter +=1
 
 def getKey():
@@ -250,26 +260,29 @@ def parseInput(text,counter):
 		print("\n press any key to close")
 		input()
 
-	elif text=="-h" or text=="-help" or text=="help" or text=="-H" or text=="-HELP"or text=="HELP":
-		print("Available commands:")
-		print("_____________________________________")
-		print("-c/-chat | activates chat mode")
-		print("-setkey  | sets a new key")
-		print("-getkey  | displays the current key")
-		print("-reset   | resets the keys to default")
+	elif text=="-h" or text=="--help" or text=="-H" or text=="--HELP":
+		print("\n\nAvailable commands:")
+		print("\n_____________________________________")
+		print("--chat   | activates chat mode")
+		print("--setkey | sets a new key")
+		print("--getkey | displays the current key")
+		print("--reset  | resets the keys to default")
 		print("_____________________________________")
 		print("This program has two main uses.")
 		print("1: Decrypt encrypted messages from clipboard, or from input if given")
 		print("2: Encrypt plaintext from clipboard, or from input if given")
 		print("_____________________________________")
 		print("Chat-mode runs an infinite loop waiting for encryption/decryption tasks")
+		print("_____________________________________")
+		print("Terminal/CMD often misrepresents letters, please use 'ctrl+v' instead of copying manually")
+		print("\n\n")
 
-	elif text=="-e"or text=="-E" or text=="" or text=="-start" or text=="-c" or text=="-chat" or text=="-CHAT" or text=="-C":
+	elif text=="" or text=="-C" or text=="-c" or text=="--chat" or text=="--CHAT":
 		continous()
 	elif text=="-resetkeys" or text=="-resetkey" or text=="-reset" or text=="-r":
 		print("are you sure you want to reset the key to default? (y/n)")
 		if(input()=="y"or"Y"):
-			setKey("Det er alltid lurt å ha lange nøkler, slik at man ikke så lett blir brute forcet!")
+			setKey("default_key")
 			print("The key has been reset!")
 
 	# elif text=="--setiterations" or text=="setIterations" or text[:]=="-i" or text[:]=="-I" or text[:]=="--iterations" or text[:]=="--Iterations":
@@ -277,11 +290,16 @@ def parseInput(text,counter):
 	# 	setIterations(input())
 	# 	print("iterations is now: ",getIterations())
 
-	elif text[:7]=="-setkey" or text[:7]=="-setKey":
-		print("Enter the new key")
-		setKey(input())
+	elif text[:8]=="--setkey" or text[:8]=="--setKey":
+		tempKey = text[8:].strip().replace('"','').replace("'","")
+		if (len(tempKey)>0):
+			print("new key is: ",tempKey)
+			setKey(tempKey)
+		else:
+			print("Enter new key:")
+			setKey(input())
 
-	elif text[:7]=="-getkey" or text[:7]=="-getKey":
+	elif text[:8]=="--getkey" or text[:8]=="--getKey":
 		print('The current key is: "'+getKey()+'"')	
 
 	elif ((trimmedText[0:5]=="!----")and(trimmedText[len(trimmedText)-5:]=="----!")):
@@ -305,8 +323,7 @@ if len(sys.argv)>=2:
 else:
 	text = pyperclip.paste()
 	print("Using text from clipboard")
-
 parseInput(text,0)
-print('You can use chat-mode by running "python krypt.py -chat", or get help by using "-h"')
+print('get help and view available commands by entering "-h"')
 
 #TODO: Plugin til nettleser som automatisk krypterer før det sendes via facebook ?
