@@ -14,7 +14,7 @@ substitution=True
 # autoinstall av pyperclip?
 # -armor
 
-iterations = 2
+iterations = 3
 
 def getIterations():
 	return iterations
@@ -34,7 +34,7 @@ def encrypt(plaintext,key,iterations):
 		for i in range (0,len(key)):
 			if(substitution):
 				# newValue= (ord(str(plaintext[counter]))+((ord(key[i])+seedExp+i))+seedSub)
-				newValue= (ord(str(plaintext[counter]))+((ord(key[i])%13)))
+				newValue= (ord(str(plaintext[counter]))+((ord(key[i])%26)))
 				ciphertext+= chr((newValue)%3000)
 			else:
 				ciphertext+= chr((ord(str(plaintext[counter]))))
@@ -77,21 +77,21 @@ def encrypt(plaintext,key,iterations):
 	#Sjekk om du kan bruke markering i stedet for kopiering
 	ciphertext = ciphertext.replace(" ","ߐ")
 	ciphertext = ciphertext.replace(chr(10),"******")
-	#Checksum key
-	totalValue=0
-	for i in range(len(key)):
-		totalValue+=ord(key[i])
-	keyValueToAdd=100-(totalValue%100)
-	ciphertext = chr(keyValueToAdd)+ciphertext
+	# #Checksum key
+	# totalValue=0
+	# for i in range(len(key)):
+	# 	totalValue+=ord(key[i])
+	# keyValueToAdd=100-(totalValue%100)
+	# ciphertext = chr(keyValueToAdd)+ciphertext
 
-	#Checksum message
-	totalValue=0
-	for i in range(len(ciphertext)):
-		totalValue+=ord(ciphertext[i])
-	messageValueToAdd = 100-(totalValue%100)
+	# #Checksum message
+	# totalValue=0
+	# for i in range(len(ciphertext)):
+	# 	totalValue+=ord(ciphertext[i])
+	# messageValueToAdd = 100-(totalValue%100)
 
 
-	ciphertext = "!----"+str(seedExp)+str(seedSub)+(str(seedRev))+chr(messageValueToAdd)+ciphertext+"----!"
+	ciphertext = "!----"+str(seedExp)+str(seedSub)+(str(seedRev))+ciphertext+"----!"
 	pyperclip.copy(ciphertext)
 	if (len(ciphertext)>=50 and iterations<=1):
 		return ciphertext
@@ -115,26 +115,26 @@ def decrypt(ciphertext,key):
 	if debug==1:
 		print("2",ciphertext)
 
-	totalValue=0
-	for i in range(0,len(ciphertext)):
-		totalValue+=ord(ciphertext[i])
-	if totalValue%100!=0:
-		# print("________________________________________________________________")
-		# print("WARNING: This message does not verify. It may have been altered or has become corrupted")
-		pass
-	if debug==1:
-		print(" checksum: ",totalValue)
-	#print("Total checksum value: ",totalValue)
-	ciphertext =ciphertext[1:]
+	# totalValue=0
+	# for i in range(0,len(ciphertext)):
+	# 	totalValue+=ord(ciphertext[i])
+	# if totalValue%100!=0:
+	# 	# print("________________________________________________________________")
+	# 	# print("WARNING: This message does not verify. It may have been altered or has become corrupted")
+	# 	pass
+	# if debug==1:
+	# 	print(" checksum: ",totalValue)
+	# #print("Total checksum value: ",totalValue)
+	# ciphertext =ciphertext[1:]
 
-	totalValue=0
-	for i in range(len(key)):
-		totalValue+=ord(key[i])
-	if ((totalValue+ord(ciphertext[0]))%100)!=0:
-		# print("________________________________________________________________")
-		print("WARNING: Key missmatch")
-		# print("________________________________________________________________")
-	ciphertext =ciphertext[1:]
+	# totalValue=0
+	# for i in range(len(key)):
+	# 	totalValue+=ord(key[i])
+	# if ((totalValue+ord(ciphertext[0]))%100)!=0:
+	# 	# print("________________________________________________________________")
+	# 	print("WARNING: Key missmatch")
+	# 	# print("________________________________________________________________")
+	# ciphertext =ciphertext[1:]
 
 	ciphertext = ciphertext.replace("ߐ"," ")
 	ciphertext = ciphertext.replace("******",chr(10))
@@ -177,7 +177,7 @@ def decrypt(ciphertext,key):
 		for i in range(0,len(key)):
 			if(substitution):
 				# newValue = ord(str(ciphertext[counter]))-((ord(key[i])+seedExp+i))-seedSub
-				newValue= (ord(str(ciphertext[counter]))-((ord(key[i])%13)))
+				newValue= (ord(str(ciphertext[counter]))-((ord(key[i])%26)))
 				plaintext += chr((newValue)%250)
 			else:
 				plaintext+= chr((ord(str(ciphertext[counter]))))
