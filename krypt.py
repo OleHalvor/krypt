@@ -67,8 +67,6 @@ def encrypt(plaintext,key,iterations):
 	#Sjekk om du kan bruke markering i stedet for kopiering
 	ciphertext = ciphertext.replace(" ","ߐ")
 	ciphertext = ciphertext.replace(chr(10),"******")
-
-
 	ciphertext = "!----"+str(seedExp)+str(seedSub)+(str(seedRev))+ciphertext+"----!"
 	pyperclip.copy(ciphertext)
 	if (len(ciphertext)>=50 and iterations<=1):
