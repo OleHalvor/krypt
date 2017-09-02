@@ -33,7 +33,6 @@ def encrypt(plaintext,key,iterations):
 	while (counter < len(plaintext)):
 		for i in range (0,len(key)):
 			if(substitution):
-				# newValue= (ord(str(plaintext[counter]))+((ord(key[i])+seedExp+i))+seedSub)
 				newValue= (ord(str(plaintext[counter]))+((ord(key[i])%26)))
 				ciphertext+= chr((newValue)%3000)
 			else:
@@ -43,7 +42,6 @@ def encrypt(plaintext,key,iterations):
 				break
 	if (seedRev>3):
 		ciphertext = ciphertext[::-1]
-	#ciphertext = ciphertext.replace(' ', '___').replace('"', "'") tester å fjerne denne
 	
 
 	# Transposition
@@ -64,31 +62,11 @@ def encrypt(plaintext,key,iterations):
 		tempCiphertext=tempCiphertext[:placement]+ciphertext[i]+tempCiphertext[placement:]
 		ciphertext = copy.deepcopy(tempCiphertext)
 
-	# for i in range(len(ciphertext)-1,0,-1):
-	# 	placement=((ord(key[i%len(key)])+i)%len(ciphertext))
-	# 	tempCiphertext=ciphertext[:plaintext]+ciphertext[placement+1:]
-	# 	tempCiphertext=tempCiphertext[:i]+ciphertext[placement]+tempCiphertext[i:]
-	# 	ciphertext = copy.deepcopy(tempCiphertext)
 
-
-
-	
 	#fjern character 32
 	#Sjekk om du kan bruke markering i stedet for kopiering
 	ciphertext = ciphertext.replace(" ","ߐ")
 	ciphertext = ciphertext.replace(chr(10),"******")
-	# #Checksum key
-	# totalValue=0
-	# for i in range(len(key)):
-	# 	totalValue+=ord(key[i])
-	# keyValueToAdd=100-(totalValue%100)
-	# ciphertext = chr(keyValueToAdd)+ciphertext
-
-	# #Checksum message
-	# totalValue=0
-	# for i in range(len(ciphertext)):
-	# 	totalValue+=ord(ciphertext[i])
-	# messageValueToAdd = 100-(totalValue%100)
 
 
 	ciphertext = "!----"+str(seedExp)+str(seedSub)+(str(seedRev))+ciphertext+"----!"
@@ -97,11 +75,6 @@ def encrypt(plaintext,key,iterations):
 		return ciphertext
 	else:
 		return encrypt(ciphertext,key,iterations-1)
-	# if(iterations<=1):
-	# 	return ciphertext
-	# else:
-	# 	# print("Encrypt again: ",iterations)
-	# 	return encrypt(ciphertext,key,iterations-1)
 
 def decrypt(ciphertext,key):
 	#print("decrypt")
@@ -115,42 +88,17 @@ def decrypt(ciphertext,key):
 	if debug==1:
 		print("2",ciphertext)
 
-	# totalValue=0
-	# for i in range(0,len(ciphertext)):
-	# 	totalValue+=ord(ciphertext[i])
-	# if totalValue%100!=0:
-	# 	# print("________________________________________________________________")
-	# 	# print("WARNING: This message does not verify. It may have been altered or has become corrupted")
-	# 	pass
-	# if debug==1:
-	# 	print(" checksum: ",totalValue)
-	# #print("Total checksum value: ",totalValue)
-	# ciphertext =ciphertext[1:]
 
-	# totalValue=0
-	# for i in range(len(key)):
-	# 	totalValue+=ord(key[i])
-	# if ((totalValue+ord(ciphertext[0]))%100)!=0:
-	# 	# print("________________________________________________________________")
-	# 	print("WARNING: Key missmatch")
-	# 	# print("________________________________________________________________")
 	# ciphertext =ciphertext[1:]
 
 	ciphertext = ciphertext.replace("ߐ"," ")
 	ciphertext = ciphertext.replace("******",chr(10))
 
-	# print("before",ciphertext)
 	for i in range(len(ciphertext)-1,-1,-1):
-		# print(i)
-		# print("move amount:",str(ord(key[i%len(key)])))
 		placement=((ord(key[i%len(key)])+i+seedExp)%len(ciphertext))
-		# print(placement)
 		tempCiphertext=ciphertext[:placement]+ciphertext[placement+1:]
 		tempCiphertext=tempCiphertext[:i]+ciphertext[placement]+tempCiphertext[i:]
-		# print("inne",tempCiphertext)
 		ciphertext = copy.deepcopy(tempCiphertext)
-	# print("after",ciphertext)
-
 
 	tempCiphertext=""
 	exponent = 2
@@ -166,7 +114,6 @@ def decrypt(ciphertext,key):
 		tempCiphertext=""
 	if seedRev>3:
 		ciphertext = ciphertext[::-1]
-	#ciphertext = ciphertext.replace('___', ' ').replace("'", '"') tester å fjerne denne også
 	if debug==1:
 		print("4",ciphertext)
 		print("")
