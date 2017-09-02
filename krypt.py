@@ -14,7 +14,7 @@ substitution=True
 # autoinstall av pyperclip?
 # -armor
 
-iterations = 3
+iterations = 2
 
 def getIterations():
 	return iterations
@@ -33,7 +33,7 @@ def encrypt(plaintext,key,iterations):
 	while (counter < len(plaintext)):
 		for i in range (0,len(key)):
 			if(substitution):
-				newValue= (ord(str(plaintext[counter]))+((ord(key[i])%26)))
+				newValue= (ord(str(plaintext[counter]))+((ord(key[i])%3)))
 				ciphertext+= chr((newValue)%3000)
 			else:
 				ciphertext+= chr((ord(str(plaintext[counter]))))
@@ -122,7 +122,7 @@ def decrypt(ciphertext,key):
 		for i in range(0,len(key)):
 			if(substitution):
 				# newValue = ord(str(ciphertext[counter]))-((ord(key[i])+seedExp+i))-seedSub
-				newValue= (ord(str(ciphertext[counter]))-((ord(key[i])%26)))
+				newValue= (ord(str(ciphertext[counter]))-((ord(key[i])%3)))
 				plaintext += chr((newValue)%250)
 			else:
 				plaintext+= chr((ord(str(ciphertext[counter]))))
