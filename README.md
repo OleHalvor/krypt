@@ -7,5 +7,7 @@ encryption/decryption software
   enter command "pip install pyperclip"
 4. Start program using "python krypt.py -c"
 
+´is this code?´
+
 
 This was created solely as a learning exercise, the probability of this being cracked by cryptoanalysis is high.
