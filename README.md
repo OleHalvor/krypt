@@ -1,4 +1,4 @@
-# krypt
+# superKrypt
 encryption/decryption software
 
 1. Download Python 3.6 or later
